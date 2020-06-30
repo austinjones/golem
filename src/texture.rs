@@ -162,6 +162,75 @@ impl Texture {
         }
     }
 
+    #[cfg(all(target_arch = "wasm32", feature = "wasm-web-sys"))]
+    pub fn set_image_bitmap(&self, image: &web_sys::ImageBitmap, color: ColorFormat) {
+        let format = match color {
+            ColorFormat::RGB => glow::RGB,
+            ColorFormat::RGBA => glow::RGBA,
+        };
+
+        let gl = &self.ctx.0.gl;
+        unsafe {
+            gl.bind_texture(glow::TEXTURE_2D, Some(self.id));
+            gl.tex_image_2d_with_image_bitmap(
+                glow::TEXTURE_2D,
+                0,
+                format as i32,
+                format,
+                glow::UNSIGNED_BYTE,
+                image,
+            );
+            gl.generate_mipmap(glow::TEXTURE_2D);
+            gl.bind_texture(glow::TEXTURE_2D, None);
+        }
+    }
+
+    #[cfg(all(target_arch = "wasm32", feature = "wasm-web-sys"))]
+    pub fn set_image_element(&self, image: &web_sys::HtmlImageElement, color: ColorFormat) {
+        let format = match color {
+            ColorFormat::RGB => glow::RGB,
+            ColorFormat::RGBA => glow::RGBA,
+        };
+
+        let gl = &self.ctx.0.gl;
+        unsafe {
+            gl.bind_texture(glow::TEXTURE_2D, Some(self.id));
+            gl.tex_image_2d_with_html_image(
+                glow::TEXTURE_2D,
+                0,
+                format as i32,
+                format,
+                glow::UNSIGNED_BYTE,
+                image,
+            );
+            gl.generate_mipmap(glow::TEXTURE_2D);
+            gl.bind_texture(glow::TEXTURE_2D, None);
+        }
+    }
+
+    #[cfg(all(target_arch = "wasm32", feature = "wasm-web-sys"))]
+    pub fn set_image_canvas(&self, image: &web_sys::HtmlCanvasElement, color: ColorFormat) {
+        let format = match color {
+            ColorFormat::RGB => glow::RGB,
+            ColorFormat::RGBA => glow::RGBA,
+        };
+
+        let gl = &self.ctx.0.gl;
+        unsafe {
+            gl.bind_texture(glow::TEXTURE_2D, Some(self.id));
+            gl.tex_image_2d_with_html_canvas(
+                glow::TEXTURE_2D,
+                0,
+                format as i32,
+                format,
+                glow::UNSIGNED_BYTE,
+                image,
+            );
+            gl.generate_mipmap(glow::TEXTURE_2D);
+            gl.bind_texture(glow::TEXTURE_2D, None);
+        }
+    }
+
     fn set_texture_param(&self, param: u32, value: i32) {
         let gl = &self.ctx.0.gl;
         unsafe {
